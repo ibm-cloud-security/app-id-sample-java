@@ -24,7 +24,7 @@ Java Liberty Sample App for the IBM Cloud App ID service. You can either run the
 
 
 
-### Requirements
+## Requirements
 * Java 8.x
 * [Maven](https://maven.apache.org/download.cgi)
 
