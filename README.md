@@ -2,6 +2,7 @@
 Java Liberty Sample App for the IBM Cloud App ID service. You can either run the application locally or in IBM Cloud.
 
 [![IBM Cloud powered][img-ibmcloud-powered]][url-ibmcloud]
+[![](https://img.shields.io/badge/platform-java-lightgrey.svg?style=flat)](https://developer.java.com/index.html)
 [![Codacy][img-codacy]][url-codacy]
 [![Version][img-version]][url-repo]
 [![DownloadsMonthly][img-downloads-monthly]][url-repo]
