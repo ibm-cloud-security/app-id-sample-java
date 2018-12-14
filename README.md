@@ -3,27 +3,32 @@ Java Liberty Sample App for the IBM Cloud App ID service. You can either run the
 
 [![](https://img.shields.io/badge/ibm%20cloud-powered-blue.svg)](https://www.ibm.com/cloud/)
 [![](https://img.shields.io/badge/platform-java-lightgrey.svg?style=flat)](https://developer.java.com/index.html)
+
+<!---
 [![Codacy][img-codacy]][url-codacy]
 [![Version][img-version]][url-repo]
 [![DownloadsMonthly][img-downloads-monthly]][url-repo]
 [![DownloadsTotal][img-downloads-total]][url-repo]
 [![License][img-license]][url-repo]
-
 [![GithubWatch][img-github-watchers]][url-github-watchers]
 [![GithubStars][img-github-stars]][url-github-stars]
 [![GithubForks][img-github-forks]][url-github-forks]
+-->
 
 ## Table of Contents
+<!---
 * [Contents](#contents)
+-->
 * [Requirements](#requirements)
 * [Running Locally](#running-locally)
 * [Running in IBM Cloud](#running-in-ibm-cloud)
 * [Clarification](#clarification)
+* [Development](#development)
 * [License](#license)
 
+<!---
 ## Contents
-
-
+-->
 
 ## Requirements
 * Java 8.x
@@ -76,6 +81,9 @@ For more information visit: https://console.bluemix.net/docs/cli/reference/bluem
 ## Clarification
 This sample runs on one instance and uses the session to store the authorization data.
 In order to run it in production mode, use services such as Redis to store the relevant data.
+
+## Development
+Any changes made to this sample most also be uploaded to the [App ID Dashboard](https://github.ibm.com/security-services/app-id-dashboard/tree/development/src/server/samples).
 
 ## License
 
