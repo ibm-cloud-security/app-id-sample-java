@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+
+
+ 	<servlet>
+		<servlet-name>MainServlet</servlet-name>
+		<servlet-class>com.ibm.bluemix.appid.liberty.sample.MainServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>ProtectedServlet</servlet-name>
+		<servlet-class>com.ibm.bluemix.appid.liberty.sample.ProtectedServlet</servlet-class>
+	</servlet>
+
+
+	<servlet-mapping>
+		<servlet-name>MainServlet</servlet-name>
+		<url-pattern>/MainServlet</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>ProtectedServlet</servlet-name>
+		<url-pattern>/ProtectedServlet</url-pattern>
+	</servlet-mapping>
+
+
+
+	<security-role>
+		<role-name>myrole</role-name>
+	</security-role>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>ProtectedServlet</web-resource-name>
+			<url-pattern>/ProtectedServlet/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>PUT</http-method>
+			<http-method>POST</http-method>
+			<http-method>DELETE</http-method>
+		</web-resource-collection>
+
+		<auth-constraint>
+			<role-name>myrole</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+
+
+
+
+
+
+</web-app>

@@ -1,0 +1,10 @@
+applications:
+- name: AppIDUK-java
+  host: AppIDUK-java-17e6afb0-00f6-438d-8f50-a5674771acef
+  buildpack: liberty-for-java
+  instances: 1
+  memory: 512M
+  disk_quota: 1024M
+  timeout: 180
+  services:
+  - App ID-UK-alias
