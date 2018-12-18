@@ -1,5 +1,5 @@
 # IBM Cloud App ID
-Java Liberty Sample App for the IBM Cloud App ID service. You can either run the application locally or in IBM Cloud.
+Java Liberty Sample App Template for the IBM Cloud App ID service. The App ID Dashboard overwrites the Liberty/manifest.yml and Liberty/server.xml files with the user's information when they download a Java sample app. When downloaded, you can either run the application locally or in IBM Cloud.
 
 [![IBM Cloud powered][img-ibmcloud-powered]][url-ibmcloud]
 [![Java Badge][img-java-badge]][url-java-badge]
