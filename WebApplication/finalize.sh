@@ -17,7 +17,7 @@ cp ../Liberty/apps/libertySample-1.0.0.war target/liberty/wlp/usr/servers/sample
 
 # Delete existing key.jks file and create new key.jks file
 
-rm target/liberty/wlp/usr/servers/sample/resources/security/key.jks
+rm target/liberty/wlp/usr/servers/sample/resources/security/key.p12
 ./target/liberty/wlp/bin/securityUtility createSSLCertificate --server=sample --password=myPassword
 
 # Restart Liberty server
