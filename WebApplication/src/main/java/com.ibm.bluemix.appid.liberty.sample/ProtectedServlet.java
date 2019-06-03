@@ -1,4 +1,4 @@
-package com.ibm.bluemix.appid.liberty.sample;
+package com.ibm.ibmcloud.appid.liberty.sample;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,14 +36,6 @@ public class ProtectedServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public ProtectedServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -53,33 +45,28 @@ public class ProtectedServlet extends HttpServlet {
         try {
             Hashtable payLoad = extractPayload();
             if (payLoad != null) {
-                // save the access token and id token on the session so that
+                // save the id_token and user's name on the session so that
                 // they can be passed on to UI elements
                 HttpSession session = request.getSession();
                 session.setAttribute("id_token", getTokenPayload(payLoad.get("id_token").toString()));
-                session.setAttribute("access_token", getTokenPayload(payLoad.get("access_token").toString()));
-                JSONObject object = new JSONObject();
-                object = JSONObject.parse(getTokenPayload(payLoad.get("id_token").toString()));
-                String username = object.get("name").toString();
-                request.setAttribute("username", username);
-                String userImage = object.get("picture").toString();
-                session.setAttribute("userImage", userImage);
 
+                JSONObject object = JSONObject.parse(getTokenPayload(payLoad.get("id_token").toString()));
+                String username = object.get("name").toString();
+                request.setAttribute("name", username);
             } else {
-                out.println("No access_token located via security context");
+                out.println("No id_token located via security context");
             }
         } catch (Exception e) {
             // In real applications, exception should be handled better
             e.printStackTrace(out);
         }
-        request.getRequestDispatcher("/WEB-INF/Welcome.jsp").forward(request, response);
+        request.getRequestDispatcher("/protected.jsp").forward(request, response);
 
 
     }
 
     private String getTokenPayload(String token) {
-        String parts[] = token.split("\\.");
-        String payload64 = parts[1];
+        String payload64 = token.split("\\.")[1];
         String payload = new String(Base64.decodeBase64(payload64));
         return payload;
     }
@@ -96,24 +83,16 @@ public class ProtectedServlet extends HttpServlet {
             // In real applications, exception should be handled better
             throw new IOException(e);
         }
-        Set<Hashtable> creds = wasSubj.getPrivateCredentials(Hashtable.class); // put this part in a method
-        Hashtable payLoad = null;
+
+        Set<Hashtable> creds = wasSubj.getPrivateCredentials(Hashtable.class);
+
         for (Hashtable hTable : creds) {
-            if (hTable.containsKey("access_token")) {
+            if (hTable.containsKey("id_token")) {
                 return hTable;
             }
         }
-
         //return null if not found
         return null;
-    }
-
-    /**
-     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-     */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        doGet(request, response);
     }
 
 }
