@@ -36,11 +36,11 @@ Navigate to the WebApplication directory and run the following command:
 ```
 Use the link http://localhost:9080/appidSample to load the web application in browser.
 
-## Running in IBM Cloud
+## Running in CF
 
 ### Prerequisites
 Before you begin, make sure that IBM Cloud CLI is installed.
-For more information visit: https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html#getting-started.
+For more information visit: https://cloud.ibm.com/docs/cli/reference/ibmcloud_cli?topic=cloud-cli-ibmcloud-cli.
 
 ### Deployment
 
@@ -56,25 +56,75 @@ For more information visit: https://console.bluemix.net/docs/cli/reference/bluem
 
 4. Login to IBM Cloud.
 
-  `bx login https://api.{{domain}}`
+  `ibmcloud login -a https://api.{{domain}}`
 
 5. Target a Cloud Foundry organization and space in which you have at least Developer role access:
 
-  Use `bx target --cf` to target Cloud Foundry org/space interactively.
+  Use `ibmcloud target --cf` to target Cloud Foundry org/space interactively.
 
 6. Bind the sample app to the instance of App ID:
 
-  `bx resource service-alias-create "appIDInstanceName-alias" --instance-name "appIDInstanceName" -s {{space}}`
+  `ibmcloud resource service-alias-create "appIDInstanceName-alias" --instance-name "appIDInstanceName" -s {{space}}`
 
 7. Deploy the sample application to IBM Cloud.
 
-  `bx app push`
+  `ibmcloud app push`
 
 8. Open your IBM Cloud app route in the browser.
 
+## Running in Kubernetes
+
+### Prerequisites
+Before you begin make sure that IBM Cloud CLI, docker and kubectl installed and that you have a running kubernetes cluster.
+You also need an IBM Cloud container registry namespace. You can find your <REGISTRY_DOMAIN> and <REPOSITORY_NAMESPACE> using `ibmcloud cr namespaces`.
+
+### Deployment
+
+**Important:** Before going live, remove https://localhost:9443/* from the list of web redirect URLs located in "Identity Providers" -> "Manage" page in the AppID dashboard.
+
+1. Login to IBM Cloud:
+
+    `ibmcloud login`
+
+2. Run the following command, and copy and paste it's output (which is an export command):
+
+    `ibmcloud cs cluster-config <CLUSTER_NAME>`
+
+3. Bind the instance of App ID to your cluster.
+
+    `ibmcloud cs cluster-service-bind <CLUSTER_NAME> default <APPID_INSTANCE_NAME>`
+
+4. Find you cluster's public IP:
+
+    `ibmcloud cs workers <CLUSTER_NAME>`
+
+5. Edit the appid-liberty-sample.yml file. Edit the image field of the deployment section to match your image name (the name of your image should be `<REGISTRY_DOMAIN>/<REPOSITORY_NAMESPACE>/appid-liberty:<APP_VERSION>`). Edit the Binding name field to match yours (it should be `binding-<App_ID_INSTANCE_NAME>`).
+
+6. Optional: Change the value of metadata.namespace from default to your cluster namespace if you’re using a different namespace.
+
+7. Build your Docker image. In an IBM Cloud Container Service Lite Cluster, we have to create the services with Node ports that have non standard http and https ports in the 30000-32767 range. In this example we chose http to be exposed at port 30080 and https at port 30081.
+
+    `docker build -t $REGISTRY_DOMAIN/$REPOSITORY_NAMESPACE/appid-liberty:$APP_VERSION . --no-cache --build-arg clusterIP=$CLUSTER_IP --build-arg sslPort=30081`
+
+8. Push the image.
+
+    `docker push $REGISTRY_DOMAIN/$REPOSITORY_NAMESPACE/appid-liberty:$APP_VERSION`
+
+    `kubectl apply -f appid-liberty-sample.yml`
+
+   If you get an 'unauthorized' error during the push command, do `ibmcloud cr login` and try again.
+
+9. Now configure the OAuth redirect URL at the App ID dashboard so it will approve redirecting to your cluster. Go to your App ID instance at [IBM Cloud console](https://cloud.ibm.com/resources) and under Manage Authentication->Authentication Settings->Add web redirect URLs add the following URL:
+
+   `https://<CLUSTER_IP>:30081/oidcclient/redirect/MyRP`
+
+10. Give the server a minute to get up and running and then you’ll be able to see your sample running on Kubernetes in IBM Cloud.
+
+    `open http://<CLUSTER_IP>:30080/appidSample`
+
 ## License
 
-Copyright (c) 2018 IBM Corporation
+Copyright (c) 2019 IBM Corporation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
