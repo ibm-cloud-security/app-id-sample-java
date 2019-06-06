@@ -76,11 +76,15 @@ For more information visit: https://cloud.ibm.com/docs/cli/reference/ibmcloud_cl
 
 ### Prerequisites
 Before you begin make sure that IBM Cloud CLI, docker and kubectl installed and that you have a running kubernetes cluster.
-You also need an IBM Cloud container registry namespace. You can find your <REGISTRY_DOMAIN> and <REPOSITORY_NAMESPACE> using `ibmcloud cr namespaces`.
+You also need an IBM Cloud container registry namespace. You can find your REGISTRY_DOMAIN and REPOSITORY_NAMESPACE using `ibmcloud cr namespaces`.
 
 ### Deployment
 
 **Important:** Before going live, remove https://localhost:9443/* from the list of web redirect URLs located in "Identity Providers" -> "Manage" page in the AppID dashboard.
+
+1. Navigate to the WebApplication directory, and do:
+
+    `mvn clean install`
 
 1. Login to IBM Cloud:
 
@@ -88,17 +92,17 @@ You also need an IBM Cloud container registry namespace. You can find your <REGI
 
 2. Run the following command, and copy and paste it's output (which is an export command):
 
-    `ibmcloud cs cluster-config <CLUSTER_NAME>`
+    `ibmcloud cs cluster-config $CLUSTER_NAME`
 
 3. Bind the instance of App ID to your cluster.
 
-    `ibmcloud cs cluster-service-bind <CLUSTER_NAME> default <APPID_INSTANCE_NAME>`
+    `ibmcloud cs cluster-service-bind $CLUSTER_NAME default $APPID_INSTANCE_NAME`
 
 4. Find you cluster's public IP:
 
-    `ibmcloud cs workers <CLUSTER_NAME>`
+    `ibmcloud cs workers $CLUSTER_NAME`
 
-5. Edit the appid-liberty-sample.yml file. Edit the image field of the deployment section to match your image name (the name of your image should be `<REGISTRY_DOMAIN>/<REPOSITORY_NAMESPACE>/appid-liberty:<APP_VERSION>`). Edit the Binding name field to match yours (it should be `binding-<App_ID_INSTANCE_NAME>`).
+5. Edit the appid-liberty-sample.yml file. Edit the image field of the deployment section to match your image name (the name of your image should be `$REGISTRY_DOMAIN/$REPOSITORY_NAMESPACE/appid-liberty:$APP_VERSION`). Edit the Binding name field to match yours (it should be `binding-$App_ID_INSTANCE_NAME`).
 
 6. Optional: Change the value of metadata.namespace from default to your cluster namespace if you’re using a different namespace.
 
@@ -116,11 +120,15 @@ You also need an IBM Cloud container registry namespace. You can find your <REGI
 
 9. Now configure the OAuth redirect URL at the App ID dashboard so it will approve redirecting to your cluster. Go to your App ID instance at [IBM Cloud console](https://cloud.ibm.com/resources) and under Manage Authentication->Authentication Settings->Add web redirect URLs add the following URL:
 
-   `https://<CLUSTER_IP>:30081/oidcclient/redirect/MyRP`
+   `https://$CLUSTER_IP:30081/oidcclient/redirect/MyRP`
 
 10. Give the server a minute to get up and running and then you’ll be able to see your sample running on Kubernetes in IBM Cloud.
 
-    `open http://<CLUSTER_IP>:30080/appidSample`
+    `open http://$CLUSTER_IP:30080/appidSample`
+    
+## See More
+#### Protecting Liberty Java Web Applications with IBM Cloud App ID
+https://www.youtube.com/watch?v=o_Er69YUsMQ&t=877s
 
 ## License
 
