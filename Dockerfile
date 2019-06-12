@@ -3,10 +3,9 @@ USER root
 WORKDIR /opt/ibm/wlp/usr/servers/
 COPY Liberty defaultServer/
 RUN installUtility install --acceptLicense defaultServer
-ARG clusterIP=localhost
-ARG sslPort=443
-ENV APPID_SAMPLE_HOST $clusterIP
-ENV APPID_SAMPLE_SSL_PORT $sslPort
+ARG clusterEndpoint=localhost
+ENV APPID_SAMPLE_HOST $clusterEndpoint
+ENV APPID_SAMPLE_SSL_PORT=30081
 RUN apt-get -qq update && apt-get -qq install jq -y
 ARG binding_secret={}
 ENV APPID_SERVICE_BINDING $binding_secret
