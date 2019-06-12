@@ -34,7 +34,7 @@ Navigate to the WebApplication directory and run the following command:
 ```bash
 ./finalize.sh
 ```
-Use the link http://localhost:9080/appidSample to load the web application in browser.
+Use the link https://localhost:9443/appidSample to load the web application in browser.
 
 ## Running in CF
 
