@@ -43,16 +43,15 @@ public class ProtectedServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         PrintWriter out = response.getWriter();
         try {
-            Hashtable payLoad = extractPayload();
-            if (payLoad != null) {
-                // save the id_token and user's name on the session so that
+            String idTokenRaw = getIDToken();
+            if (idTokenRaw != null) {
+                String idTokenPayload = getTokenPayload(idTokenRaw);
+                // save the id_token and user's name on the request so that
                 // they can be passed on to UI elements
-                HttpSession session = request.getSession();
-                session.setAttribute("id_token", getTokenPayload(payLoad.get("id_token").toString()));
-
-                JSONObject object = JSONObject.parse(getTokenPayload(payLoad.get("id_token").toString()));
-                String username = object.get("name").toString();
+                JSONObject idTokenContent = JSONObject.parse(idTokenPayload);
+                String username = idTokenContent.get("name").toString();
                 request.setAttribute("name", username);
+                request.setAttribute("id_token", idTokenPayload);
             } else {
                 out.println("No id_token located via security context");
             }
@@ -61,8 +60,6 @@ public class ProtectedServlet extends HttpServlet {
             e.printStackTrace(out);
         }
         request.getRequestDispatcher("/protected.jsp").forward(request, response);
-
-
     }
 
     private String getTokenPayload(String token) {
@@ -75,7 +72,7 @@ public class ProtectedServlet extends HttpServlet {
     This method uses Liberty API to extract a Hashtable object that contains
     the App ID tokens.
      */
-    private Hashtable extractPayload() throws IOException{
+    private String getIDToken() throws IOException{
         Subject wasSubj;
         try {
             wasSubj = WSSubject.getRunAsSubject();
@@ -88,7 +85,7 @@ public class ProtectedServlet extends HttpServlet {
 
         for (Hashtable hTable : creds) {
             if (hTable.containsKey("id_token")) {
-                return hTable;
+                return hTable.get("id_token").toString();
             }
         }
         //return null if not found

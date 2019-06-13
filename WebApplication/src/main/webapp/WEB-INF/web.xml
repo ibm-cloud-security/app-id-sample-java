@@ -4,12 +4,6 @@
 		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 		 version="2.4">
 
-
-	<servlet>
-		<servlet-name>LoginServlet</servlet-name>
-		<servlet-class>com.ibm.ibmcloud.appid.liberty.sample.LoginServlet</servlet-class>
-	</servlet>
-
 	<servlet>
 		<servlet-name>ProtectedServlet</servlet-name>
 		<servlet-class>com.ibm.ibmcloud.appid.liberty.sample.ProtectedServlet</servlet-class>
@@ -19,12 +13,6 @@
 		<servlet-name>LogoutServlet</servlet-name>
 		<servlet-class>com.ibm.ibmcloud.appid.liberty.sample.LogoutServlet</servlet-class>
 	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>LoginServlet</servlet-name>
-		<url-pattern>/LoginServlet</url-pattern>
-	</servlet-mapping>
-
 
 	<servlet-mapping>
 		<servlet-name>ProtectedServlet</servlet-name>
