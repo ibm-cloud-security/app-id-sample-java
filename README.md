@@ -36,7 +36,7 @@ Navigate to the WebApplication directory and run the following command:
 ```
 Use the link https://localhost:9443/appidSample to load the web application in browser.
 
-## Running in CF
+## Running in Cloud Foundry
 
 ### Prerequisites
 Before you begin, make sure that IBM Cloud CLI is installed.
@@ -50,27 +50,43 @@ For more information visit: https://cloud.ibm.com/docs/cli/reference/ibmcloud_cl
 
 2. Generate your ‘war’ file and upload it using the following command:
 
-  `mvn clean install`
+    `mvn clean install`
 
 3. Navigate to the Liberty directory.
 
 4. Login to IBM Cloud.
 
-  `ibmcloud login -a https://api.{{domain}}`
+    `ibmcloud login -a https://api.{{domain}}`
 
 5. Target a Cloud Foundry organization and space in which you have at least Developer role access:
 
-  Use `ibmcloud target --cf` to target Cloud Foundry org/space interactively.
+    Use `ibmcloud target --cf` to target Cloud Foundry org/space interactively.
 
 6. Bind the sample app to the instance of App ID:
 
-  `ibmcloud resource service-alias-create "appIDInstanceName-alias" --instance-name "appIDInstanceName" -s {{space}}`
+    `ibmcloud resource service-alias-create "appIDInstanceName-alias" --instance-name "appIDInstanceName" -s {{space}}`
+    
+7. Add the alias to the manifest.yml file in the sample app.
 
-7. Deploy the sample application to IBM Cloud.
+   ```
+   applications:
+        - name: [app-instance-name]
+        memory: 256M
+        services:
+        - appIDInstanceName-alias
+   ```
 
-  `ibmcloud app push`
+8. Deploy the sample application to IBM Cloud.
 
-8. Open your IBM Cloud app route in the browser.
+    `ibmcloud app push`
+    
+9. Now configure the OAuth redirect URL at the App ID dashboard so it will approve redirecting to your app. Go to your App ID instance at [IBM Cloud console](https://cloud.ibm.com/resources) and under Manage Authentication->Authentication Settings->Add web redirect URLs add the following URL:
+
+   `https://{App Domain}/oidcclient/redirect/MyRP`
+   
+   You find your app's domain by visiting Cloud Foundry Apps at the IBM Cloud dashboard: https://cloud.ibm.com/resources.
+
+10. Open your IBM Cloud app route in the browser. To access your app go to `https://{App Domain}/appidSample`.
 
 ## Running in Kubernetes
 
@@ -82,6 +98,8 @@ You also need an IBM Cloud container registry namespace (see https://cloud.ibm.c
 
 **Important:** Before going live, remove https://localhost:9443/* from the list of web redirect URLs located in "Identity Providers" -> "Manage" page in the AppID dashboard.
 
+**Note:** Your App ID instance name must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character. You can visit the App ID dashboard to change your instance name. 
+ 
 1. Navigate to the WebApplication directory, and do:
 
     `mvn clean install`
