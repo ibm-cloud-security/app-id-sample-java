@@ -34,7 +34,9 @@ Navigate to the WebApplication directory and run the following command:
 ```bash
 ./run_locally.sh
 ```
-Use the link https://localhost:9443/appidSample to load the web application in browser.
+Use the link https://localhost:9443/appidSample to load the web application in browser. 
+
+*Note:* You will get a warning that the connection is not secure, this happens because this sample application does not have a proper certificate. Click Proceed to localhost to continue.
 
 ## Running in Cloud Foundry
 
