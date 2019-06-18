@@ -32,7 +32,7 @@ Java Liberty Sample App Template for the IBM Cloud App ID service. The App ID Da
 
 Navigate to the WebApplication directory and run the following command:
 ```bash
-./finalize.sh
+./run_locally.sh
 ```
 Use the link https://localhost:9443/appidSample to load the web application in browser.
 
