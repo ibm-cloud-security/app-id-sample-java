@@ -32,15 +32,17 @@ Java Liberty Sample App Template for the IBM Cloud App ID service. The App ID Da
 
 Navigate to the WebApplication directory and run the following command:
 ```bash
-./finalize.sh
+./run_locally.sh
 ```
-Use the link http://localhost:9080/appidSample to load the web application in browser.
+Use the link https://localhost:9443/appidSample to load the web application in browser. 
 
-## Running in IBM Cloud
+*Note:* You will get a warning that the connection is not secure, this happens because this sample application does not have a proper certificate. Click Proceed to localhost to continue.
+
+## Running in Cloud Foundry
 
 ### Prerequisites
 Before you begin, make sure that IBM Cloud CLI is installed.
-For more information visit: https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html#getting-started.
+For more information visit: https://cloud.ibm.com/docs/cli/reference/ibmcloud_cli?topic=cloud-cli-ibmcloud-cli.
 
 ### Deployment
 
@@ -50,31 +52,114 @@ For more information visit: https://console.bluemix.net/docs/cli/reference/bluem
 
 2. Generate your ‘war’ file and upload it using the following command:
 
-  `mvn clean install`
+    `mvn clean install`
 
 3. Navigate to the Liberty directory.
 
 4. Login to IBM Cloud.
 
-  `bx login https://api.{{domain}}`
+    `ibmcloud login -a https://api.{{domain}}`
 
 5. Target a Cloud Foundry organization and space in which you have at least Developer role access:
 
-  Use `bx target --cf` to target Cloud Foundry org/space interactively.
+    Use `ibmcloud target --cf` to target Cloud Foundry org/space interactively.
 
 6. Bind the sample app to the instance of App ID:
 
-  `bx resource service-alias-create "appIDInstanceName-alias" --instance-name "appIDInstanceName" -s {{space}}`
+    `ibmcloud resource service-alias-create "appIDInstanceName-alias" --instance-name "appIDInstanceName" -s {{space}}`
+    
+7. Add the alias to the manifest.yml file in the sample app.
 
-7. Deploy the sample application to IBM Cloud.
+   ```
+   applications:
+        - name: [app-instance-name]
+        memory: 256M
+        services:
+        - appIDInstanceName-alias
+   ```
 
-  `bx app push`
+8. Deploy the sample application to IBM Cloud.
 
-8. Open your IBM Cloud app route in the browser.
+    `ibmcloud app push`
+    
+9. Now configure the OAuth redirect URL at the App ID dashboard so it will approve redirecting to your app. Go to your App ID instance at [IBM Cloud console](https://cloud.ibm.com/resources) and under Manage Authentication->Authentication Settings->Add web redirect URLs add the following URL:
+
+   `https://{App Domain}/oidcclient/redirect/MyRP`
+   
+   You find your app's domain by visiting Cloud Foundry Apps at the IBM Cloud dashboard: https://cloud.ibm.com/resources.
+
+10. Open your IBM Cloud app route in the browser. To access your app go to `https://{App Domain}/appidSample`.
+
+## Running in Kubernetes
+
+### Prerequisites
+Before you begin make sure that IBM Cloud CLI, docker and kubectl installed and that you have a running kubernetes cluster.
+You also need an IBM Cloud container registry namespace (see https://cloud.ibm.com/kubernetes/registry/main/start). You can find your registry domain and repository namespace using `ibmcloud cr namespaces`.
+
+### Deployment
+
+**Important:** Before going live, remove https://localhost:9443/* from the list of web redirect URLs located in "Identity Providers" -> "Manage" page in the AppID dashboard.
+
+**Note:** Your App ID instance name must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character. You can visit the App ID dashboard to change your instance name. 
+ 
+1. Navigate to the WebApplication directory, and do:
+
+    `mvn clean install`
+
+2. Login to IBM Cloud:
+
+    `ibmcloud login`
+
+3. Run the following command, it will output an export command.
+
+    `ibmcloud cs cluster-config {CLUSTER_NAME}`
+    
+4. Set the KUBECONFIG environment variable. Copy the output from the previous command and paste it in your terminal. The command output looks similar to the following example:
+   
+    `export KUBECONFIG=/Users/$USER/.bluemix/plugins/container-service/clusters/mycluster/kube-config-hou02-mycluster.yml`
+
+5. Bind the instance of App ID to your cluster.
+
+    `ibmcloud cs cluster-service-bind {CLUSTER_NAME} default {APP_ID_INSTANCE_NAME}`
+
+6. Find your cluster's public endpoint {CLUSTER_ENDPOINT}.
+   
+   Note: If you are using the free version of kubernetes (with only 1 worker node) you can use your node's public IP instead, which you can find using:
+
+    `ibmcloud cs workers {CLUSTER_NAME}`
+
+7. Edit the appid-liberty-sample.yml file. 
+    1. Edit the image field of the deployment section to match your image name (the name of your image should be `{REGISTRY_DOMAIN}/{REPOSITORY_NAMESPACE}/appid-liberty:{APP_VERSION}`). 
+    2. Edit the Binding name field to match yours (it should be `binding-{APP_ID_INSTANCE_NAME}`).
+    3. Optional: Change the value of metadata.namespace from default to your cluster namespace if you’re using a different namespace.
+
+9. Build your Docker image. In an IBM Cloud Container Service Lite Cluster, we have to create the services with Node ports that have non standard http and https ports in the 30000-32767 range. In this example we chose http to be exposed at port 30080 and https at port 30081.
+
+    `docker build -t {REGISTRY_DOMAIN}/{REPOSITORY_NAMESPACE}/appid-liberty:{APP_VERSION} . --no-cache --build-arg clusterEndpoint={CLUSTER_ENDPOINT}`
+
+10. Push the image.
+
+    `docker push {REGISTRY_DOMAIN}/{REPOSITORY_NAMESPACE}/appid-liberty:{APP_VERSION}`
+
+    `kubectl apply -f appid-liberty-sample.yml`
+
+   Note: If you get an 'unauthorized' error during the push command, do `ibmcloud cr login` and try again.
+
+11. Now configure the OAuth redirect URL at the App ID dashboard so it will approve redirecting to your cluster. Go to your App ID instance at [IBM Cloud console](https://cloud.ibm.com/resources) and under Manage Authentication->Authentication Settings->Add web redirect URLs add the following URL:
+
+   `https://{CLUSTER_ENDPOINT}:30081/oidcclient/redirect/MyRP`
+
+12. Give the server a minute to get up and running and then you’ll be able to see your sample running on Kubernetes in IBM Cloud.
+
+    `open http://{CLUSTER_ENDPOINT}:30080/appidSample`
+    
+## See More
+#### Protecting Liberty Java Web Applications with IBM Cloud App ID
+https://www.youtube.com/watch?v=o_Er69YUsMQ&t=877s
 
 ## License
 
-Copyright (c) 2018 IBM Corporation
+Copyright (c) 2019 IBM Corporation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

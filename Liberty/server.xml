@@ -17,6 +17,7 @@
                          tokenEndpointAuthMethod="basic"
                          signatureAlgorithm="RS256"
                          authFilterid="myAuthFilter"
+                         redirectToRPHostAndPort="https://${env.APPID_SAMPLE_HOST}:${env.APPID_SAMPLE_SSL_PORT}"
     />
     <authFilter id="myAuthFilter">
         <requestUrl id="myRequestUrl" urlPattern="/ProtectedServlet" matchType="contains"/>
