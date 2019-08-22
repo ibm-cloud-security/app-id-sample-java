@@ -72,6 +72,9 @@ For more information visit: https://console.bluemix.net/docs/cli/reference/bluem
 
 8. Open your IBM Cloud app route in the browser.
 
+## Got Questions?
+Join us on [Slack](https://www.ibm.com/cloud/blog/announcements/get-help-with-ibm-cloud-app-id-related-questions-on-slack) and chat with our dev team.
+
 ## License
 
 Copyright (c) 2018 IBM Corporation
