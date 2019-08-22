@@ -157,6 +157,9 @@ You also need an IBM Cloud container registry namespace (see https://cloud.ibm.c
 #### Protecting Liberty Java Web Applications with IBM Cloud App ID
 https://www.youtube.com/watch?v=o_Er69YUsMQ&t=877s
 
+## Got Questions?
+Join us on [Slack](https://www.ibm.com/cloud/blog/announcements/get-help-with-ibm-cloud-app-id-related-questions-on-slack) and chat with our dev team.
+
 ## License
 
 Copyright (c) 2019 IBM Corporation
