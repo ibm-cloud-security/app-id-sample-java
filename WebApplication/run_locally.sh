@@ -3,7 +3,7 @@
 # Install the necessary files
 
 mvn clean install
-mvn liberty:start-server
+mvn liberty:start
 
 # Copy Liberty War file and server.xml file into sample server
 
@@ -22,5 +22,5 @@ rm target/liberty/wlp/usr/servers/sample/resources/security/key.p12
 
 # Restart Liberty server
 
-mvn liberty:stop-server
-mvn liberty:start-server
+mvn liberty:stop
+mvn liberty:start
