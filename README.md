@@ -112,32 +112,28 @@ You also need an IBM Cloud container registry namespace (see https://cloud.ibm.c
 
 3. Run the following command, it will output an export command.
 
-    `ibmcloud cs cluster-config {CLUSTER_NAME}`
+    `ibmcloud ks cluster config --cluster {CLUSTER_NAME}`
     
-4. Set the KUBECONFIG environment variable. Copy the output from the previous command and paste it in your terminal. The command output looks similar to the following example:
-   
-    `export KUBECONFIG=/Users/$USER/.bluemix/plugins/container-service/clusters/mycluster/kube-config-hou02-mycluster.yml`
+4. Bind the instance of App ID to your cluster.
 
-5. Bind the instance of App ID to your cluster.
+    `ibmcloud ks cluster service bind --cluster {CLUSTER_NAME} --namespace default --service {APP_ID_INSTANCE_NAME}`
 
-    `ibmcloud cs cluster-service-bind {CLUSTER_NAME} default {APP_ID_INSTANCE_NAME}`
-
-6. Find your cluster's public endpoint {CLUSTER_ENDPOINT}.
+5. Find your cluster's public endpoint {CLUSTER_ENDPOINT}.
    
    Note: If you are using the free version of kubernetes (with only 1 worker node) you can use your node's public IP instead, which you can find using:
 
-    `ibmcloud cs workers {CLUSTER_NAME}`
+    `ibmcloud ks workers --cluster {CLUSTER_NAME}`
 
-7. Edit the appid-liberty-sample.yml file. 
+6. Edit the appid-liberty-sample.yml file. 
     1. Edit the image field of the deployment section to match your image name (the name of your image should be `{REGISTRY_DOMAIN}/{REPOSITORY_NAMESPACE}/appid-liberty:{APP_VERSION}`). 
     2. Edit the Binding name field to match yours (it should be `binding-{APP_ID_INSTANCE_NAME}`).
     3. Optional: Change the value of metadata.namespace from default to your cluster namespace if you’re using a different namespace.
 
-9. Build your Docker image. In an IBM Cloud Container Service Lite Cluster, we have to create the services with Node ports that have non standard http and https ports in the 30000-32767 range. In this example we chose http to be exposed at port 30080 and https at port 30081.
+7. Build your Docker image. In an IBM Cloud Container Service Lite Cluster, we have to create the services with Node ports that have non standard http and https ports in the 30000-32767 range. In this example we chose http to be exposed at port 30080 and https at port 30081.
 
     `docker build -t {REGISTRY_DOMAIN}/{REPOSITORY_NAMESPACE}/appid-liberty:{APP_VERSION} . --no-cache --build-arg clusterEndpoint={CLUSTER_ENDPOINT}`
 
-10. Push the image.
+8. Push the image.
 
     `docker push {REGISTRY_DOMAIN}/{REPOSITORY_NAMESPACE}/appid-liberty:{APP_VERSION}`
 
@@ -145,11 +141,11 @@ You also need an IBM Cloud container registry namespace (see https://cloud.ibm.c
 
    Note: If you get an 'unauthorized' error during the push command, do `ibmcloud cr login` and try again.
 
-11. Now configure the OAuth redirect URL at the App ID dashboard so it will approve redirecting to your cluster. Go to your App ID instance at [IBM Cloud console](https://cloud.ibm.com/resources) and under Manage Authentication->Authentication Settings->Add web redirect URLs add the following URL:
+9. Now configure the OAuth redirect URL at the App ID dashboard so it will approve redirecting to your cluster. Go to your App ID instance at [IBM Cloud console](https://cloud.ibm.com/resources) and under Manage Authentication->Authentication Settings->Add web redirect URLs add the following URL:
 
    `https://{CLUSTER_ENDPOINT}:30081/oidcclient/redirect/MyRP`
 
-12. Give the server a minute to get up and running and then you’ll be able to see your sample running on Kubernetes in IBM Cloud.
+10. Give the server a minute to get up and running and then you’ll be able to see your sample running on Kubernetes in IBM Cloud.
 
     `open http://{CLUSTER_ENDPOINT}:30080/appidSample`
     
