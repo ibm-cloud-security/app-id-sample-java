@@ -1,10 +1,13 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: appid-liberty-deployment
   namespace: default # <-- edit here when using a different namespace in cluster
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      run: appid-liberty-deployment
   template:
     metadata:
       name: appid-liberty-deployment
